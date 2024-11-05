@@ -28,6 +28,7 @@
     <Compile Include="llm_module\memory_manager.py" />
     <Compile Include="nlp_module\simpleNLP.py" />
     <Compile Include="stt_module\stt.py" />
+    <Compile Include="tts_module\api_caller.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="llm_module\" />

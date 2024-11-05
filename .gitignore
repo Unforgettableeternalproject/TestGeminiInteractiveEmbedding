@@ -367,3 +367,5 @@ env/
 
 # Local files
 command_chat_classifier/
+faiss_index
+*.json

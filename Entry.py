@@ -1,3 +1,4 @@
+import datetime
 from llm_module.gemini_client import GeminiClient
 from nlp_module.simpleNLP import SimpleNLP
 from llm_module.memory_manager import MemoryManager
@@ -19,20 +20,24 @@ def main():
         while True:
             message = input("You: ")
             
-            if (message == "check history"): 
+            if(message is None): continue
+            
+            if (message == ">check"): 
                 memoryManager.check_memory()
                 continue
-            if (message == "clear history"): 
+            if (message == ">clear"): 
                 memoryManager.clear_memory()
                 continue
-            if (message == "exit"): break
+            if (message == ">exit"): break
             
             label = nlp_model.classify_message(message)
             response = gemini_client.send_labeled_message(message, label)
             print("U.E.P: {}".format(response.text))
     except KeyboardInterrupt:
-        print("Chat ended.")
+        print(datetime.time + "\nChat ended.")
         return
+    
+    print(datetime.time + "Chat ended.")
 
 if __name__ == "__main__":
     main()

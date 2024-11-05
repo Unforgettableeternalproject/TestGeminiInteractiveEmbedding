@@ -59,6 +59,8 @@ class MemoryManager:
 
     def retrieve_memory(self, query, top_k=5):
         """Retrieve top_k relevant memories based on a query."""
+        if self.faiss_index_exists(): self.load_index()
+        
         if self.index is None or len(self.metadata) == 0:
             print("Memory is empty or index is not initialized.")
             return []
@@ -72,19 +74,27 @@ class MemoryManager:
     
     def clear_memory(self):
         """Clear the FAISS index and metadata, resetting the memory."""
-        self.index = faiss.IndexFlatL2(self.dimension)  # Reset FAISS index
-        self.metadata = []  # Clear metadata list
+        # self.index = faiss.IndexFlatL2(self.dimension)  # Reset FAISS index
+        # self.metadata = []  # Clear metadata list
 
         # Remove files if they exist
         if os.path.exists(self.index_file):
             os.remove(self.index_file)
         if os.path.exists(self.metadata_file):
             os.remove(self.metadata_file)
+            
+        self.create_index()  # Create a new index and metadata)
 
         print("Memory cleared: FAISS index and metadata files removed.")
 
     def check_memory(self):
         """Print the number of stored embeddings and the metadata for inspection."""
+        if self.faiss_index_exists():
+            self.load_index()
+        else:
+            print("No memory stored.")
+            return
+
         if self.index is None or len(self.metadata) == 0:
             print("No memory stored.")
         else:

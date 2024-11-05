@@ -1,5 +1,6 @@
 import vertexai
 from transformers import pipeline
+from tts_module.api_caller import TTSClient
 from .memory_manager import MemoryManager
 from vertexai.generative_models import GenerativeModel
 from .config import SYSTEM_INSTRUCTION, GENERATION_CONFIG, SAFETY_SETTINGS
@@ -10,7 +11,7 @@ class GeminiClient:
         self.model = GenerativeModel("gemini-1.5-pro-002", system_instruction=[SYSTEM_INSTRUCTION])
         self.memory_manager = MemoryManager()
         self.load_faiss_index()
-        
+        self.tts_client = TTSClient()
         self.summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
         
     def load_faiss_index(self):
@@ -22,13 +23,13 @@ class GeminiClient:
             
     def summarize_context(self, interactions):
         """Summarize a list of retrieved interactions."""
-        context_text = "\n".join(
-            f"User: {interaction['user']}\nU.E.P: {interaction['response']}"
+        context_text = "Chat context as below:" + "\n".join(
+            f"User said {interaction['user']}\n and you responded with {interaction['response']}\n"
             for interaction in interactions
         )
         
         # Generate a summary with the summarizer pipeline
-        summary = self.summarizer(context_text, max_length=100, min_length=30, do_sample=False)
+        summary = self.summarizer(context_text, max_length=60, min_length=30, do_sample=False)
         return summary[0]['summary_text']
     
     def start_chat(self):
@@ -43,6 +44,8 @@ class GeminiClient:
             memory_summary = self.summarize_context(past_interactions)
         else:
             memory_summary = "No relevant past interactions found."
+            
+        print("\nNLP results: ", label, '\n')
 
         # Customize system instruction based on message type
         if label == "chat":
@@ -53,6 +56,8 @@ class GeminiClient:
             system_instruction = SYSTEM_INSTRUCTION + "\n\nRespond playfully, as the input doesn't make sense."
         else:
             system_instruction = SYSTEM_INSTRUCTION
+            
+        print("Past memory summary: ", memory_summary, '\n')
 
         # Create the prompt with memory summary
         full_prompt = f"{system_instruction}\n\nRelevant Memory Summary:\n{memory_summary}\n\nUser: {message}"
@@ -69,6 +74,8 @@ class GeminiClient:
             generation_config=GENERATION_CONFIG,
             safety_settings=SAFETY_SETTINGS
         )
+        
+        self.tts_client.synthesize_and_play(response.text)
 
         # Add the current message and response to memory
         self.memory_manager.add_memory(message, {"user": message, "response": response.text})
