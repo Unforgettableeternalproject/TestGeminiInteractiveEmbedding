@@ -1,3 +1,4 @@
+from calendar import c
 import datetime
 from llm_module.gemini_client import GeminiClient
 from nlp_module.simpleNLP import SimpleNLP
@@ -25,17 +26,21 @@ def main():
             message = input("You: ")
             
             if(message is None): continue
-            
-            if (message == ">listen"):
-                message = stt_process.onetime_speech_recognize()
-                
-            if (message == ">check"): 
-                memoryManager.check_memory()
-                continue
-            if (message == ">clear"): 
-                memoryManager.clear_memory()
-                continue
-            if (message == ">exit"): break
+            if message.startswith(">"):
+                match(message[1:]):
+                    case "listen":
+                        message = stt_process.onetime_speech_recognize()
+                    case "check":
+                        memoryManager.check_memory()
+                        continue
+                    case "clear":
+                        memoryManager.clear_memory()
+                        continue
+                    case "exit":
+                        break
+                    case _:
+                        print("Unknown command.")
+                        continue
             
             label = nlp_model.classify_message(message)
             response = gemini_client.send_labeled_message(message, label)

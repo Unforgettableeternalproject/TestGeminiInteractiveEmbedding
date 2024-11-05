@@ -29,7 +29,7 @@ class TTSClient:
 
         return chunks
 
-    def synthesize_and_play(self, text, f0_up_key=8, f0_method="rmvpe", index_rate=0, protect=0.33):
+    def synthesize_and_play(self, text, f0_up_key=7, f0_method="rmvpe", index_rate=0, protect=0.33):
         """Send text to TTS API and play the synthesized audio."""
         
         chunks = self.split_text(text) # Split text into chunks
