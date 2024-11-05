@@ -25,9 +25,15 @@
     <Compile Include="Entry.py" />
     <Compile Include="llm_module\config.py" />
     <Compile Include="llm_module\gemini_client.py" />
+    <Compile Include="llm_module\memory_manager.py" />
+    <Compile Include="nlp_module\simpleNLP.py" />
+    <Compile Include="stt_module\stt.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="llm_module\" />
+    <Folder Include="nlp_module\" />
+    <Folder Include="stt_module\" />
+    <Folder Include="tts_module\" />
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="env\">
@@ -39,6 +45,10 @@
       <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
       <Architecture>X64</Architecture>
     </Interpreter>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include=".gitignore" />
+    <Content Include="requirements.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

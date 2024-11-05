@@ -366,10 +366,4 @@ FodyWeavers.xsd
 env/
 
 # Local files
-audio_files/
-results/
 command_chat_classifier/
-*.whl
-
-# Unit Tests
-tests/

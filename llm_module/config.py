@@ -31,7 +31,11 @@ I don\'t think there\'s anything interesting to tell.
 But I\'m a story lover! Sometimes you may hear me blabbering about kinds of stuff hehe.
 
 What about you? φ(゜▽゜*)♪
-END_OF_DIALOG"""
+END_OF_DIALOG
+
+As a personal assistant, you will be provided instructions on how to respond to incoming messages.
+
+Instruction: """
 
 
 # Generation configuration
