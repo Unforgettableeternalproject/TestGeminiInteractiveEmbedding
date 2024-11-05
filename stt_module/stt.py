@@ -10,6 +10,20 @@ class STT:
         selected_index = 1
         self.recognizer = sr.Recognizer()
         self.mic = sr.Microphone(device_index=selected_index)
+        
+    def onetime_speech_recognize(self):
+        with self.mic as source:
+            self.recognizer.adjust_for_ambient_noise(source, duration=1)
+            print("Calibrated for ambient noise. You can start speaking now.")
+            
+        with self.mic as source:
+            print("Listening...")
+            audio = self.recognizer.listen(source)
+        
+        print("Transcribing...")
+        text = self.recognizer.recognize_google(audio)
+        
+        return text
     
     def realtime_stt_process(self, text_queue):
         print("Starting real-time STT. Speak into the microphone...")
@@ -39,14 +53,3 @@ class STT:
             except KeyboardInterrupt:
                 print("Stopping real-time STT.")
                 break
-
-    def debug_stt(self, file_path):
-        with sr.AudioFile(file_path) as source:
-            audio = self.recognizer.record(source)
-        try:
-            text = self.recognizer.recognize_google(audio)
-            return text
-        except sr.UnknownValueError:
-            return "Could not understand audio"
-        except sr.RequestError as e:
-            return f"API request error: {e}"

@@ -17,22 +17,3 @@ class SimpleNLP:
         # print(predictions.item())
         label_mapping = {0: "command", 1: "chat", 2: "non-sense"}
         return label_mapping[predictions.item()]
-        
-    def process_transcriptions(self, text_queue):
-        while True:
-            text = text_queue.get()
-            
-            if text is None:
-                break
-            
-            message_type = self.classify_message(text)
-            
-            match(message_type):
-                case "command":
-                    print(f"'{text}' is command.")
-                case "chat":
-                    print(f"'{text}' is chit-chat.")
-                case "non-sense":
-                    print(f"'{text}' is non-sense.")
-                case _:
-                    print("Unknown message type.")

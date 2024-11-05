@@ -2,6 +2,7 @@ import datetime
 from llm_module.gemini_client import GeminiClient
 from nlp_module.simpleNLP import SimpleNLP
 from llm_module.memory_manager import MemoryManager
+from stt_module.stt import STT
 
 def main():
     # Initialize the Gemini client
@@ -15,6 +16,9 @@ def main():
     # Initialize the NLP model
     nlp_model = SimpleNLP()
     
+    # Initialize the STT module
+    stt_process = STT()
+    
     # Send sample messages and print responses
     try:
         while True:
@@ -22,6 +26,9 @@ def main():
             
             if(message is None): continue
             
+            if (message == ">listen"):
+                message = stt_process.onetime_speech_recognize()
+                
             if (message == ">check"): 
                 memoryManager.check_memory()
                 continue
