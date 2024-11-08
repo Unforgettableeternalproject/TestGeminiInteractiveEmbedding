@@ -1,5 +1,5 @@
 import vertexai
-from transformers import pipeline
+from transformers import pipeline, AutoTokenizer
 from tts_module.api_caller import TTSClient
 from .memory_manager import MemoryManager
 from vertexai.generative_models import GenerativeModel
@@ -13,40 +13,63 @@ class GeminiClient:
         self.load_faiss_index()
         self.tts_client = TTSClient()
         self.summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
-        
+        self.tokenizer = AutoTokenizer.from_pretrained("facebook/bart-large-cnn")
+
     def load_faiss_index(self):
         if self.memory_manager.faiss_index_exists():
-            self.memory_manager.load_index()  # Load the FAISS index if it exists
+            self.memory_manager.load_index()
         else:
             print("FAISS index not found. Creating a new index.")
-            self.memory_manager.create_index()  # Create a new FAISS index
-            
-    def summarize_context(self, interactions):
-        """Summarize a list of retrieved interactions."""
-        context_text = "Chat context as below:" + "\n".join(
-            f"User said {interaction['user']}\n and you responded with {interaction['response']}\n"
-            for interaction in interactions
-        )
+            self.memory_manager.create_index()
+
+    def chunk_and_summarize_memories(self, interactions, max_tokens=512):
+        """Divide interactions into chunks based on token limits and summarize each chunk."""
+        summaries = []
+        current_chunk, current_tokens = [], 0
         
-        # Generate a summary with the summarizer pipeline
-        summary = self.summarizer(context_text, max_length=60, min_length=30, do_sample=False)
-        return summary[0]['summary_text']
+        for interaction in interactions:
+            # Create text for the interaction
+            interaction_text = f"User: {interaction['user']} | Response: {interaction['response']}"
+            
+            # Calculate token count for this interaction
+            token_count = len(self.tokenizer.encode(interaction_text))
+            
+            # Check if adding this interaction exceeds the max token limit for the current chunk
+            if current_tokens + token_count > max_tokens:
+                # Summarize the current chunk if token limit is reached
+                chunk_text = " ".join(current_chunk)
+                summary = self.summarizer(chunk_text, max_length=60, min_length=30, do_sample=False)
+                summaries.append(summary[0]['summary_text'])
+                
+                # Reset for the next chunk
+                current_chunk, current_tokens = [], 0
+            
+            # Add interaction to the current chunk
+            current_chunk.append(interaction_text)
+            current_tokens += token_count
+
+        # Summarize any remaining interactions in the last chunk
+        if current_chunk:
+            chunk_text = " ".join(current_chunk)
+            summary = self.summarizer(chunk_text, max_length=60, min_length=30, do_sample=False)
+            summaries.append(summary[0]['summary_text'])
+        
+        # Combine all chunk summaries into a single context
+        return " ".join(summaries)
     
     def start_chat(self):
         self.chat = self.model.start_chat()
 
     def send_labeled_message(self, message, label):
         # Retrieve relevant past interactions
-        past_interactions = self.memory_manager.retrieve_memory(message, top_k=5)
+        past_interactions = self.memory_manager.retrieve_memory(message, top_k=10)  # Retrieve more to ensure enough context
         
-        # Summarize the retrieved interactions
+        # Summarize retrieved memories using sliding window
         if past_interactions:
-            memory_summary = self.summarize_context(past_interactions)
+            memory_summary = self.chunk_and_summarize_memories(past_interactions, max_tokens=512)
         else:
             memory_summary = "No relevant past interactions found."
-            
-        print("\nNLP results: ", label, '\n')
-
+        
         # Customize system instruction based on message type
         if label == "chat":
             system_instruction = SYSTEM_INSTRUCTION + "\n\nYou are having a friendly chat."
@@ -56,13 +79,11 @@ class GeminiClient:
             system_instruction = SYSTEM_INSTRUCTION + "\n\nRespond playfully, as the input doesn't make sense."
         else:
             system_instruction = SYSTEM_INSTRUCTION
-            
-        print("Past memory summary: ", memory_summary, '\n')
 
-        # Create the prompt with memory summary
+        # Combine the system instruction and memory summary into a single prompt
         full_prompt = f"{system_instruction}\n\nRelevant Memory Summary:\n{memory_summary}\n\nUser: {message}"
         
-        # Send the message with the summarized memory context
+        # Generate response with summarized memory context
         model_with_memory = GenerativeModel(
             "gemini-1.5-pro-002",
             system_instruction=[full_prompt]
@@ -75,6 +96,7 @@ class GeminiClient:
             safety_settings=SAFETY_SETTINGS
         )
         
+        # Synthesize the response and play it
         self.tts_client.synthesize_and_play(response.text)
 
         # Add the current message and response to memory

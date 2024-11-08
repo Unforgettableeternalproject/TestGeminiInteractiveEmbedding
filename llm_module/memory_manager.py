@@ -1,5 +1,3 @@
-# llm_module/memory_manager.py
-
 import faiss
 import numpy as np
 import os

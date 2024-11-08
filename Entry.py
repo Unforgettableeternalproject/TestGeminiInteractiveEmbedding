@@ -1,5 +1,4 @@
-from calendar import c
-import datetime
+from datetime import datetime
 from llm_module.gemini_client import GeminiClient
 from nlp_module.simpleNLP import SimpleNLP
 from llm_module.memory_manager import MemoryManager
@@ -46,10 +45,10 @@ def main():
             response = gemini_client.send_labeled_message(message, label)
             print("U.E.P: {}".format(response.text))
     except KeyboardInterrupt:
-        print(datetime.time + "\nChat ended.")
+        print(datetime.now() + "\nChat ended.")
         return
     
-    print(datetime.time + "Chat ended.")
+    print(datetime.now() + "Chat ended.")
 
 if __name__ == "__main__":
     main()

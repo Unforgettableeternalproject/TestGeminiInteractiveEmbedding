@@ -28,10 +28,12 @@
     <Compile Include="llm_module\memory_manager.py" />
     <Compile Include="nlp_module\simpleNLP.py" />
     <Compile Include="stt_module\stt.py" />
+    <Compile Include="test\RAG.py" />
     <Compile Include="tts_module\api_caller.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="llm_module\" />
+    <Folder Include="test\" />
     <Folder Include="nlp_module\" />
     <Folder Include="stt_module\" />
     <Folder Include="tts_module\" />
