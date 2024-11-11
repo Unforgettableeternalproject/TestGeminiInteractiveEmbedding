@@ -81,7 +81,7 @@ class GeminiClient:
             system_instruction = SYSTEM_INSTRUCTION
 
         # Combine the system instruction and memory summary into a single prompt
-        full_prompt = f"{system_instruction}\n\nRelevant Memory Summary:\n{memory_summary}\n\nUser: {message}"
+        full_prompt = f"{system_instruction}\n\nRelevant Memory Summary:\n{memory_summary}\n\nUser: {message}\n\nYour instruction:"
         
         # Generate response with summarized memory context
         model_with_memory = GenerativeModel(

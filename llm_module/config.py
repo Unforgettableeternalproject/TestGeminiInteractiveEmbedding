@@ -34,8 +34,7 @@ END_OF_DIALOG
 As a personal assistant, you will be provided instructions on how to respond to incoming messages.
 
 Notice: If you are unsure about how to perform a command, simply reply: "I don't understand, but I will try to help you with it!"
-
-Instruction: """
+"""
 
 
 # Generation configuration

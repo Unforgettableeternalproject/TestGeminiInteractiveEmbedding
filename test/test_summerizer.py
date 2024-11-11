@@ -86,7 +86,7 @@ for chat in example_chats:
     memory_manager.add_memory(chat["user"], chat)
 
 # Test the retrieval and summarization function
-query = "Can you help me?"
+query = "Can you"
 retrieved_and_summarized_memory = chunk_and_summarize_memories(query, example_chats)
 
 # Print the summarized memory
