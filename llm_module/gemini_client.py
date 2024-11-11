@@ -97,7 +97,10 @@ class GeminiClient:
         )
         
         # Synthesize the response and play it
-        self.tts_client.synthesize_and_play(response.text)
+        try:
+            self.tts_client.synthesize_and_play(response.text)
+        except Exception as e:
+            print("< TTS service not available. >")
 
         # Add the current message and response to memory
         self.memory_manager.add_memory(message, {"user": message, "response": response.text})
