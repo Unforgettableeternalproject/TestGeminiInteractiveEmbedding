@@ -14,7 +14,7 @@ This project is a simple chatbot implementation that integrates speech-to-text (
 ## Project Structure
 
 ```graphql
-¢x SimpleChatbot-STT-TTS/ 
+¢x TestGeminiInteractiveEmbedding/ 
 ¢u¢w¢w llm_module/
 ¢x   ¢u¢w¢w config.py
 ¢x   ¢u¢w¢w memory_manager.py 
