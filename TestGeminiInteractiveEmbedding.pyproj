@@ -36,10 +36,16 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="llm_module\" />
+    <Folder Include="concepts\" />
     <Folder Include="test\" />
     <Folder Include="nlp_module\" />
     <Folder Include="stt_module\" />
     <Folder Include="tts_module\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include=".gitignore" />
+    <Content Include="README.md" />
+    <Content Include="requirements.txt" />
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="env\">
@@ -51,11 +57,6 @@
       <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
       <Architecture>X64</Architecture>
     </Interpreter>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include=".gitignore" />
-    <Content Include="README.md" />
-    <Content Include="requirements.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

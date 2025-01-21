@@ -4,8 +4,8 @@ from pydub.playback import play
 from io import BytesIO
 import re
 
-class TTSClient:
-    def __init__(self, ip="26.9.184.32", port="5000"):
+class TTSClient:    
+    def __init__(self, ip="26.87.187.124", port="5000"):
         # Set up the base URL for the TTS API
         self.url = f"http://{ip}:{port}/synthesize"
         
